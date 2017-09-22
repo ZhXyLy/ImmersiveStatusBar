@@ -7,13 +7,16 @@
     tools:context="com.hou.immersivestatusbar.MainActivity">
 
     <ImageView
+        android:id="@+id/iv_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/image"/>
 
     <LinearLayout
+        android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="visible"
         android:background="@color/colorAccent">
 
         <TextView

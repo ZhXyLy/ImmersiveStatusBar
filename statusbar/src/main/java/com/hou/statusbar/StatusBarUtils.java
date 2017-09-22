@@ -18,8 +18,12 @@ public class StatusBarUtils {
 
     public static void showPicture(Activity activity) {
         if (isOver21()) {
+            View decorView = activity.getWindow().getDecorView();
+            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            decorView.setSystemUiVisibility(option);
             activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
+            activity.getWindow().setStatusBarColor(Color.TRANSPARENT); //也可以设置成灰色透明的，比较符合Material Design的风格
         } else if (isOver19()) {
             //获取windowphone下的decorView
             ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
@@ -29,14 +33,14 @@ public class StatusBarUtils {
                 decorView.getChildAt(count - 1).setBackgroundColor(calculateStatusColor(Color.TRANSPARENT, 0));
             } else {
                 //新建一个和状态栏高宽的view
-                StatusBarView statusView = createStatusBarView(activity, Color.TRANSPARENT, 0);
+                StatusBarView statusView = createStatusBarView(activity, Color.TRANSPARENT);
                 decorView.addView(statusView);
             }
             activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
     }
 
-    public static void setStatusBarColor(Activity activity, int color, int statusBarAlpha) {
+    public static void setStatusBarColor(Activity activity, int color) {
         if (isOver23()) {
             activity.getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
@@ -52,10 +56,10 @@ public class StatusBarUtils {
             int count = decorView.getChildCount();
             //判断是否已经添加了statusBarView
             if (count > 0 && decorView.getChildAt(count - 1) instanceof StatusBarView) {
-                decorView.getChildAt(count - 1).setBackgroundColor(calculateStatusColor(color, statusBarAlpha));
+                decorView.getChildAt(count - 1).setBackgroundColor(color);
             } else {
                 //新建一个和状态栏高宽的view
-                StatusBarView statusView = createStatusBarView(activity, color, statusBarAlpha);
+                StatusBarView statusView = createStatusBarView(activity, color);
                 decorView.addView(statusView);
             }
             ViewGroup rootView = (ViewGroup) ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
@@ -66,13 +70,13 @@ public class StatusBarUtils {
         }
     }
 
-    private static StatusBarView createStatusBarView(Activity activity, int color, int alpha) {
+    private static StatusBarView createStatusBarView(Activity activity, int color) {
         // 绘制一个和状态栏一样高的矩形
         StatusBarView statusBarView = new StatusBarView(activity);
         LinearLayout.LayoutParams params =
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getStatusBarHeight(activity));
         statusBarView.setLayoutParams(params);
-        statusBarView.setBackgroundColor(calculateStatusColor(color, alpha));
+        statusBarView.setBackgroundColor(color);
         return statusBarView;
     }
 
@@ -85,7 +89,7 @@ public class StatusBarUtils {
         return Color.rgb(red, green, blue);
     }
 
-    private static int getStatusBarHeight(Context context) {
+    public static int getStatusBarHeight(Context context) {
         int result = 0;
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
